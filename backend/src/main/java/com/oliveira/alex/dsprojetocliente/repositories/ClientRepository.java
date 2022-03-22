@@ -1,9 +1,11 @@
 package com.oliveira.alex.dsprojetocliente.repositories;
 
-import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.oliveira.alex.dsprojetocliente.entities.Client;
 
-public interface ClientRepository extends JpaRepositoryImplementation<Client, Long> {
+@Repository
+public interface ClientRepository extends JpaRepository<Client, Long> {
 
 }
