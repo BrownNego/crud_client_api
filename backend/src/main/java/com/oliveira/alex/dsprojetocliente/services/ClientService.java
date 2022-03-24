@@ -1,6 +1,7 @@
 package com.oliveira.alex.dsprojetocliente.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ public class ClientService {
 	public List<ClientDTO> findAll(){
 		List<Client> list = repository.findAll();
 		
-		//Método Lambda
+		//Method Lambda
 		List<ClientDTO> listDto = list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
 		return listDto;
 		
-		//Método utilizando For
+		//Method using For
 //		List<ClientDTO> listDto = new ArrayList<>();
 //			
 //		for(Client cli : list) {
@@ -35,6 +36,14 @@ public class ClientService {
 //		
 //		return listDto;
 }
+
+	@Transactional(readOnly = true)
+	public ClientDTO findById(Long id) {
+		Optional<Client> obj = repository.findById(id);
+		Client entity = obj.get();
+		return new ClientDTO(entity);
+	}
+
 	
 
 }
