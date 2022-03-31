@@ -2,9 +2,9 @@ package com.oliveira.alex.dsprojetocliente.services;
 
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.oliveira.alex.dsprojetocliente.dto.ClientDTO;
 import com.oliveira.alex.dsprojetocliente.entities.Client;
 import com.oliveira.alex.dsprojetocliente.repositories.ClientRepository;
+import com.oliveira.alex.dsprojetocliente.services.exceptions.DatabaseException;
+import com.oliveira.alex.dsprojetocliente.services.exceptions.EntityNotFoundException;
 
 @Service
 public class ClientService {
@@ -42,7 +44,7 @@ public class ClientService {
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repository.findById(id);
-		Client entity = obj.get();
+		Client entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 		return new ClientDTO(entity);
 	}
 
@@ -76,9 +78,11 @@ public class ClientService {
 
 	public void delete(Long id) {
 		try {
-			repository.deleteById(id);
-		} catch (Exception e) {
-			throw new RuntimeErrorException(null, e.getMessage());
+		repository.deleteById(id);
+		} catch(EmptyResultDataAccessException e) {
+			throw new EntityNotFoundException("ID not found " + id);
+		}catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Integrity violation");
 		}
 
 	}
